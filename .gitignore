@@ -1,0 +1,31 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# virtual environments
+venv/
+env/
+.venv/
+
+# system files
+.DS_Store
+Thumbs.db
+
+# notebook checkpoints
+.ipynb_checkpoints/
+
+# dataset files
+data/raw/
+data/processed/
+
+# model checkpoints
+*.pt
+*.pth
+
+# logs
+logs/
+
+# environment variables
+.env
