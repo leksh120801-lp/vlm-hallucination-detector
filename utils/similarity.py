@@ -11,20 +11,29 @@ def compute_similarity(image_embedding, text_embedding):
 
 #This computes cosine similarity between embeddings.
 
+def detect_hallucination(score, threshold=0.25):
+    
+        if score >= threshold:
+            return "likely correct"
+        else:
+            return "possible hallucination"
+     
+
 import json
 import os
 from datetime import datetime
 
 
-def save_results(image_path, captions, scores):
+def save_results(image_path, captions, scores, decisions):
     os.makedirs("experiments/results", exist_ok=True)
 
     results = []
 
-    for caption, score in zip(captions, scores):
+    for caption, score, decision in zip(captions, scores, decisions):
         results.append({
             "caption": caption,
-            "similarity_score": float(score)
+            "similarity_score": float(score),
+            "decision": decision
         })
 
     output = {
@@ -41,3 +50,5 @@ def save_results(image_path, captions, scores):
     print(f"\nResults saved to {filename}")
 
     # This function saves the similarity scores to a JSON file for later analysis.
+
+    

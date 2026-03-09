@@ -1,0 +1,21 @@
+{
+    "image": "data/raw/test.jpg",
+    "results": [
+        {
+            "caption": "a dog sitting on grass",
+            "similarity_score": 0.24625542759895325,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "a cat sitting on grass",
+            "similarity_score": 0.17755788564682007,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "a car parked on road",
+            "similarity_score": 0.16171805560588837,
+            "decision": "possible hallucination"
+        }
+    ],
+    "timestamp": "2026-03-09T22:15:25.440538"
+}

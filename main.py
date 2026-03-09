@@ -2,6 +2,9 @@ from models.clip_model import load_clip_model
 from utils.preprocessing import load_image
 from utils.similarity import compute_similarity
 from utils.similarity import compute_similarity, save_results
+from utils.similarity import compute_similarity, save_results, detect_hallucination
+from utils.visualization import show_attention_heatmap
+
 
 import torch
 
@@ -38,14 +41,21 @@ def main():
     text_embedding = outputs.text_embeds
 
     similarity = compute_similarity(image_embedding, text_embedding)
+    best_score = similarity[0].max().item()
+
+    show_attention_heatmap(image, best_score)
 
     print("\nSimilarity Scores:\n")
+    decisions = []
 
     for caption, score in zip(captions, similarity[0]):
-        print(f"{caption} : {score.item():.4f}")
+        s = score.item()
+        decision = detect_hallucination(s)
+        decisions.append(decision)
+        print(f"{caption} : {s:.4f} → {decision}")
     scores = similarity[0].cpu().numpy()
 
-    save_results(image_path, captions, scores)
+    save_results(image_path, captions, scores, decisions)
 
 if __name__ == "__main__":
     main()
