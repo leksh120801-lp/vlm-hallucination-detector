@@ -1,0 +1,257 @@
+{
+    "dataset": "COCO",
+    "total_samples": 50,
+    "accuracy": 0.9,
+    "results": [
+        {
+            "caption": "A man with a red helmet on a small moped on a dirt road. ",
+            "score": 0.3258594870567322,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A young girl inhales with the intent of blowing out a candle. ",
+            "score": 0.3269885182380676,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A man on a bicycle riding next to a train",
+            "score": 0.3167204260826111,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A kitchen is shown with a variety of items on the counters.",
+            "score": 0.35118234157562256,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A wooden ball on top of a wooden stick.",
+            "score": 0.224603533744812,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "Multiple wooden spoons are shown on a table top.",
+            "score": 0.33911991119384766,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A bathroom that has a broken wall in the shower.",
+            "score": 0.2746424973011017,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A bathroom with an enclosed shower next to a sink and a toilet.",
+            "score": 0.31175175309181213,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "people on bicycles ride down a busy street ",
+            "score": 0.27726709842681885,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "The bathroom is clean and ready to be used. ",
+            "score": 0.29128164052963257,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A clean bathroom is seen in this image.",
+            "score": 0.31114327907562256,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A young man wearing black attire and a flowered tie is standing and smiling.",
+            "score": 0.2958821952342987,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "Black and white photograph of two men on motorcycles.",
+            "score": 0.3121544122695923,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A row of motorcycles parked in front of a building.",
+            "score": 0.2956346273422241,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A fluffy white chair that faces away fro a television.",
+            "score": 0.3067990839481354,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A painting of a table with fruit on top of it.",
+            "score": 0.31325763463974,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "Vegetables are displayed in a wooden barrel outdoors.",
+            "score": 0.24847465753555298,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "A motorbike sitting in front of a wine display case",
+            "score": 0.3434488773345947,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A large jetliner sitting on top of an airport runway.",
+            "score": 0.2780084013938904,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "An airport filled with planes sitting on tarmacs.",
+            "score": 0.2905484437942505,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A small blue plane sitting on top of a field.",
+            "score": 0.29721301794052124,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A motorcycle sits parked across from a herd of livestock.",
+            "score": 0.33035123348236084,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A large white dog is sitting on a bench beside an elderly man.",
+            "score": 0.3927670121192932,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A couple of traffic lights sitting under a cloudy sky.",
+            "score": 0.2761871814727783,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "An eating area with a table and a few chairs.",
+            "score": 0.24988874793052673,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "A little girl in a pink shirt standing near a blue metal sculpture.",
+            "score": 0.27837076783180237,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A herd of sheep standing on top of snow covered field.",
+            "score": 0.294404536485672,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A flock of small birds flying in the sky over the water.",
+            "score": 0.292813241481781,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A swan is floating down the river by the boat.",
+            "score": 0.25936806201934814,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A giraffe grazing on a tree in the wilderness with other wildlife",
+            "score": 0.32458990812301636,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "there are blue lights shining threw palm trees ",
+            "score": 0.2534930109977722,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A bird in a pot eating a fruit.",
+            "score": 0.31955111026763916,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A tall massive clock tower towering over a city.",
+            "score": 0.23102585971355438,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "Two ducks floating together on a body of water. ",
+            "score": 0.29647573828697205,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A large wooden pole with a green street sign hanging from it.",
+            "score": 0.33663874864578247,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "a ram is looking at the camera and standing on some grass",
+            "score": 0.3228432536125183,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A man with a snowboard next to a man with a mask.",
+            "score": 0.33673444390296936,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "Many different signs cover a post next to a bus stop.",
+            "score": 0.2517317831516266,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A cow standing near a curb in front of a store. ",
+            "score": 0.36690253019332886,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "The animal is standing by the booth at the event.",
+            "score": 0.22608569264411926,
+            "decision": "possible hallucination"
+        },
+        {
+            "caption": "a cat that is eating some kind of banana",
+            "score": 0.31649938225746155,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A gray tiger cat sitting at a wooden table on a chair.",
+            "score": 0.3009495437145233,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "two cows outside one laying down and the other standing near a building ",
+            "score": 0.2539404630661011,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "Two cows grazing on grass in a field by a house.",
+            "score": 0.31961989402770996,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "An image of a very cute girl with face piercings.",
+            "score": 0.29041025042533875,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "Several elephants are in a habitat as heads are in the foreground.",
+            "score": 0.3140069246292114,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "An elephant standing under the shade of a tree.",
+            "score": 0.3123514652252197,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "Two kayaks, one pink the other yellow, on bank of water. ",
+            "score": 0.3032703399658203,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A blue boat docked on a green lush shore.",
+            "score": 0.26333218812942505,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "An elephant and a rhinoceros stand not far from each other.",
+            "score": 0.2908482849597931,
+            "decision": "likely correct"
+        }
+    ]
+}

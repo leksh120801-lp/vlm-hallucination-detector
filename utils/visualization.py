@@ -1,11 +1,41 @@
-import matplotlib.pyplot as plt
+import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 
-def show_attention_heatmap(image, similarity_score):
+def overlay_heatmap(image, heatmap):
 
-    plt.imshow(image)
-    plt.title(f"Similarity Score: {similarity_score:.2f}")
+    heatmap = cv2.resize(heatmap, (image.shape[1], image.shape[0]))
+
+    heatmap = np.uint8(255 * heatmap)
+
+    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+
+    overlay = cv2.addWeighted(image, 0.6, heatmap, 0.4, 0)
+
+    return overlay
+
+
+def show_heatmap(image, heatmap):
+
+    overlay = overlay_heatmap(image, heatmap)
+
+    plt.figure(figsize=(6,6))
+    plt.imshow(cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB))
     plt.axis("off")
-
     plt.show()
+
+def generate_fake_heatmap():
+
+    heatmap = np.random.rand(14,14)
+
+    heatmap = heatmap / heatmap.max()
+
+    return heatmap
+
+def save_heatmap(image, heatmap, filename):
+
+    overlay = overlay_heatmap(image, heatmap)
+
+    cv2.imwrite(filename, overlay)
+

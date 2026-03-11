@@ -1,0 +1,32 @@
+{
+    "dataset": "COCO",
+    "total_samples": 5,
+    "accuracy": 0.8,
+    "results": [
+        {
+            "caption": "A man with a red helmet on a small moped on a dirt road. ",
+            "score": 0.3258594870567322,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A young girl inhales with the intent of blowing out a candle. ",
+            "score": 0.3269885182380676,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A man on a bicycle riding next to a train",
+            "score": 0.3167204260826111,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A kitchen is shown with a variety of items on the counters.",
+            "score": 0.35118234157562256,
+            "decision": "likely correct"
+        },
+        {
+            "caption": "A wooden ball on top of a wooden stick.",
+            "score": 0.224603533744812,
+            "decision": "possible hallucination"
+        }
+    ]
+}
