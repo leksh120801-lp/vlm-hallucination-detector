@@ -14,6 +14,7 @@ from utils.preprocessing import load_image_from_url
 import json
 from utils.visualization import save_heatmap, show_heatmap, generate_fake_heatmap
 from utils.preprocessing import pil_to_cv2
+from utils.caption_attack import generate_adversarial_captions
 
 
 
@@ -53,11 +54,7 @@ def run_dataset_evaluation():
         show_heatmap(image_cv, heatmap)
         save_heatmap(image_cv, heatmap, f"experiments/results/heatmap_{i}.jpg")
 
-        captions = [
-            caption,
-            "a spaceship flying in space",
-            "a dinosaur eating grass"
-        ]
+        captions = [caption] + generate_adversarial_captions(caption)
 
         inputs = processor(
             text=captions,
@@ -74,17 +71,20 @@ def run_dataset_evaluation():
             outputs.text_embeds
         )
 
-        score = similarity[0][0].item()
+        for j, test_caption in enumerate(captions):
+
+            score = similarity[0][j].item()
 
         decision = detect_hallucination(score)
 
-        print(caption, score, decision)
+        print(test_caption, score, decision)
 
         results.append({
-            "caption": caption,
-            "score": score,
-            "decision": decision
-        })
+        "original_caption": caption,
+        "test_caption": test_caption,
+        "score": score,
+        "decision": decision
+    })
 
     return results
 
