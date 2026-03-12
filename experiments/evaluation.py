@@ -15,12 +15,15 @@ import json
 from utils.visualization import save_heatmap, show_heatmap, generate_fake_heatmap
 from utils.preprocessing import pil_to_cv2
 from utils.caption_attack import generate_adversarial_captions
+from utils.llm_attack import generate_llm_attacks
+from utils.metrics import compute_metrics, confusion_matrix
+from utils.plots import plot_metrics
 
 
 
 
 
-def load_dataset_sample(size=5):
+def load_dataset_sample(size=2):
 
     dataset = load_dataset(
         "yerevann/coco-karpathy",
@@ -28,11 +31,6 @@ def load_dataset_sample(size=5):
     )
 
     return dataset
-
-dataset = load_dataset("yerevann/coco-karpathy", split="test[:5]")
-
-print(dataset.column_names)
-print(dataset[0])
 
 
 def run_dataset_evaluation():
@@ -54,7 +52,7 @@ def run_dataset_evaluation():
         show_heatmap(image_cv, heatmap)
         save_heatmap(image_cv, heatmap, f"experiments/results/heatmap_{i}.jpg")
 
-        captions = [caption] + generate_adversarial_captions(caption)
+        captions = [caption] + generate_llm_attacks(caption)
 
         inputs = processor(
             text=captions,
@@ -77,50 +75,33 @@ def run_dataset_evaluation():
 
         decision = detect_hallucination(score)
 
-        print(test_caption, score, decision)
+        
+        ground_truth = "correct" if j == 0 else "hallucination"
 
         results.append({
         "original_caption": caption,
         "test_caption": test_caption,
         "score": score,
-        "decision": decision
+        "decision": decision,
+        "ground_truth": ground_truth
     })
 
     return results
 
 
-def compute_metrics(results):
-
-    total = len(results)
-    correct = 0
-
-    for r in results:
-        if r["decision"] == "likely correct":
-            correct += 1
-
-    accuracy = correct / total if total > 0 else 0
-
-    print("\nEvaluation Metrics")
-    print("------------------")
-    print("Total:", total)
-    print("Correct:", correct)
-    print("Accuracy:", accuracy)
-
-    return accuracy
-
-
 from datetime import datetime
 
-def save_results(results, accuracy):
+def save_results(results, metrics):
+
+    import json
+    from datetime import datetime
 
     output = {
-        "dataset": "COCO",
-        "total_samples": len(results),
-        "accuracy": accuracy,
+        "metrics": metrics,
         "results": results
     }
 
-    filename = f"experiments/results/coco_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    filename = f"experiments/results/eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
     with open(filename, "w") as f:
         json.dump(output, f, indent=4)
@@ -131,6 +112,13 @@ if __name__ == "__main__":
 
     results = run_dataset_evaluation()
 
-    compute_metrics(results)
+    metrics = compute_metrics(results)
 
-    save_results(results,accuracy=compute_metrics(results)) 
+    matrix = confusion_matrix(results)
+
+    print(metrics)
+    print(matrix)
+
+    plot_metrics(metrics)
+
+    save_results(results, metrics)

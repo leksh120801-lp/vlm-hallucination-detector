@@ -1,0 +1,23 @@
+{
+    "metrics": {
+        "accuracy": 1.0,
+        "hallucination_rate": 0.0,
+        "total_samples": 2
+    },
+    "results": [
+        {
+            "original_caption": "A man with a red helmet on a small moped on a dirt road. ",
+            "test_caption": "Generate incorrect image captions different from: A man with a red helmet on a small moped on a dirt road. \u00a0He had been killed in a hit-and-run accident. \u00a0He had been hit by a car.",
+            "score": 0.2660875916481018,
+            "decision": "likely correct",
+            "ground_truth": "hallucination"
+        },
+        {
+            "original_caption": "A young girl inhales with the intent of blowing out a candle. ",
+            "test_caption": "Generate incorrect image captions different from: A young girl inhales with the intent of blowing out a candle. \u00a0She is now a ghost. \u00a0She was not a ghost. \u00a0She is now a ghost. \u00a0She",
+            "score": 0.292891263961792,
+            "decision": "likely correct",
+            "ground_truth": "hallucination"
+        }
+    ]
+}

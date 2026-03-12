@@ -1,0 +1,37 @@
+{
+    "dataset": "COCO",
+    "total_samples": 5,
+    "accuracy": 0.6,
+    "results": [
+        {
+            "original_caption": "A man with a red helmet on a small moped on a dirt road. ",
+            "test_caption": "Generate incorrect image captions different from: A man with a red helmet on a small moped on a dirt road. \u00a0He told his wife what happened and she went to the police. \u00a0She called the police. \u00a0He",
+            "score": 0.23108354210853577,
+            "decision": "possible hallucination"
+        },
+        {
+            "original_caption": "A young girl inhales with the intent of blowing out a candle. ",
+            "test_caption": "Generate incorrect image captions different from: A young girl inhales with the intent of blowing out a candle. _____________________________________________________________________________\n\nThe following is an excerpt from a new collection of essays by the artist, Tom Dallen, entitled",
+            "score": 0.27594679594039917,
+            "decision": "likely correct"
+        },
+        {
+            "original_caption": "A man on a bicycle riding next to a train",
+            "test_caption": "Generate incorrect image captions different from: A man on a bicycle riding next to a train in a crowded area.\n\nA man on a bicycle riding next to a train in a crowded area.\n\nA man on a bicycle riding next",
+            "score": 0.267093300819397,
+            "decision": "likely correct"
+        },
+        {
+            "original_caption": "A kitchen is shown with a variety of items on the counters.",
+            "test_caption": "Generate incorrect image captions different from: A kitchen is shown with a variety of items on the counters.\n\nThe display of a list of all items you bought in a store can vary from one store to another.\n\nWhen you go",
+            "score": 0.2698434889316559,
+            "decision": "likely correct"
+        },
+        {
+            "original_caption": "A wooden ball on top of a wooden stick.",
+            "test_caption": "Generate incorrect image captions different from: A wooden ball on top of a wooden stick.\n\nA wooden ball on top of a wooden stick. Move the cursor while the image is being displayed.\n\nThe cursor will be moved once the",
+            "score": 0.21512500941753387,
+            "decision": "possible hallucination"
+        }
+    ]
+}
