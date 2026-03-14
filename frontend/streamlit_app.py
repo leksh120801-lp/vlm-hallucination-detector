@@ -37,7 +37,7 @@ st.write(
 # -----------------------------
 model_choice = st.selectbox(
     "Select Model",
-    ["CLIP","BLIP"]
+    ["CLIP","BLIP", "SigLIP"]
 )
 
 from models.model_registry import load_model_by_name
