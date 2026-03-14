@@ -2,6 +2,7 @@ import torch
 import numpy as np
 
 
+
 def generate_clip_heatmap(model, processor, image, caption):
 
     inputs = processor(
@@ -35,6 +36,12 @@ def generate_clip_heatmap(model, processor, image, caption):
     heatmap = heatmap.cpu().numpy()
 
     heatmap = heatmap / heatmap.max()
+
+    # increase contrast
+    heatmap = heatmap ** 3
+
+    
+    
 
     return heatmap
 

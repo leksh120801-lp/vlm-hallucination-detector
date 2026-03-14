@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+
 # Ensure project root is on path
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -43,7 +44,7 @@ model_choice = st.selectbox(
 
 from models.model_registry import load_model_by_name
 
-@st.cache_resource
+
 def load_model(name):
     return load_model_by_name(name)
 
@@ -171,14 +172,14 @@ if run_button and uploaded_image and caption:
 
     overlay = cv2.applyColorMap(
         np.uint8(255 * heatmap),
-        cv2.COLORMAP_JET
+        cv2.COLORMAP_TURBO
     )
 
     overlay = cv2.addWeighted(
         image_cv,
-        0.6,
+        0.5,
         overlay,
-        0.4,
+        0.7,
         0
     )
 
