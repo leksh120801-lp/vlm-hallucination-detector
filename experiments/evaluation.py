@@ -12,12 +12,13 @@ from utils.similarity import compute_similarity, detect_hallucination
 import torch
 from utils.preprocessing import load_image_from_url
 import json
-from utils.visualization import save_heatmap, show_heatmap, generate_fake_heatmap
+from utils.visualization import save_heatmap, show_heatmap
 from utils.preprocessing import pil_to_cv2
 from utils.caption_attack import generate_adversarial_captions
 from utils.llm_attack import generate_llm_attacks
 from utils.metrics import compute_metrics, confusion_matrix
 from utils.plots import plot_metrics
+from utils.real_heatmap import generate_clip_heatmap
 
 
 
@@ -48,7 +49,14 @@ def run_dataset_evaluation():
         image = load_image_from_url(sample["url"])
 
         image_cv = pil_to_cv2(image)
-        heatmap = generate_fake_heatmap()
+       
+
+        heatmap = generate_clip_heatmap(
+            model,
+            processor,
+            image,
+            caption
+        )
         show_heatmap(image_cv, heatmap)
         save_heatmap(image_cv, heatmap, f"experiments/results/heatmap_{i}.jpg")
 

@@ -15,9 +15,10 @@ from PIL import Image
 from models.clip_model import load_clip_model
 from utils.similarity import compute_similarity, detect_hallucination
 from utils.preprocessing import pil_to_cv2
-from utils.visualization import generate_fake_heatmap
+
 from utils.caption_attack import generate_adversarial_captions
 from models.model_registry import load_model_by_name
+from utils.real_heatmap import generate_clip_heatmap
 
 
 # -----------------------------
@@ -154,7 +155,14 @@ if run_button and uploaded_image and caption:
 
     image_cv = pil_to_cv2(image)
 
-    heatmap = generate_fake_heatmap()
+     
+
+    heatmap = generate_clip_heatmap(
+        model,
+        processor,
+        image,
+        caption
+    )
 
     heatmap = cv2.resize(
         heatmap,
