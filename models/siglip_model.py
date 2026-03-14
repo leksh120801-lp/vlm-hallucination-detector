@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoProcessor, AutoModel
+from transformers import AutoProcessor, SiglipModel
 
 
 def load_siglip_model():
@@ -10,7 +10,7 @@ def load_siglip_model():
         "google/siglip-base-patch16-224"
     )
 
-    model = AutoModel.from_pretrained(
+    model = SiglipModel.from_pretrained(
         "google/siglip-base-patch16-224"
     ).to(device)
 

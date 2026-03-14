@@ -8,12 +8,11 @@ def load_model_by_name(model_name):
     if model_name == "CLIP":
         return load_clip_model()
 
-
     elif model_name == "BLIP":
-       return load_blip_model()
+        return load_blip_model()
 
     elif model_name == "SigLIP":
-         return load_siglip_model()
+        return load_siglip_model()
 
     else:
         raise ValueError(f"Unknown model: {model_name}")

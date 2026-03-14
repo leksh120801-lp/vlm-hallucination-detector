@@ -49,15 +49,6 @@ def load_model(name):
 model, processor, device = load_model(model_choice)
 
 
-# -----------------------------
-# Model selection (future use)
-# -----------------------------
-
-model_choice = st.selectbox(
-    "Select Model",
-    ["CLIP"]
-)
-
 
 # -----------------------------
 # Upload Image
@@ -69,7 +60,7 @@ uploaded_image = st.file_uploader(
 )
 
 if uploaded_image is not None:
-    st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+   st.image(uploaded_image, caption="Uploaded Image", width="stretch")
 
 
 # -----------------------------
