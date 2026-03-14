@@ -17,6 +17,7 @@ from utils.similarity import compute_similarity, detect_hallucination
 from utils.preprocessing import pil_to_cv2
 from utils.visualization import generate_fake_heatmap
 from utils.caption_attack import generate_adversarial_captions
+from models.model_registry import load_model_by_name
 
 
 # -----------------------------
@@ -34,12 +35,16 @@ st.write(
 # -----------------------------
 # Load model (cached)
 # -----------------------------
+model_choice = st.selectbox(
+    "Select Model",
+    ["CLIP"]
+)
 
 @st.cache_resource
-def load_model():
-    return load_clip_model()
+def load_model(name):
+    return load_model_by_name(name)
 
-model, processor, device = load_model()
+model, processor, device = load_model(model_choice)
 
 
 # -----------------------------
