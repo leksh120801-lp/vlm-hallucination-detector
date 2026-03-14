@@ -37,8 +37,10 @@ st.write(
 # -----------------------------
 model_choice = st.selectbox(
     "Select Model",
-    ["CLIP"]
+    ["CLIP","BLIP"]
 )
+
+from models.model_registry import load_model_by_name
 
 @st.cache_resource
 def load_model(name):
