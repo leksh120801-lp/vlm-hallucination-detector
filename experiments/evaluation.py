@@ -81,18 +81,17 @@ def run_dataset_evaluation():
 
             score = similarity[0][j].item()
 
-        decision = detect_hallucination(score)
+            decision = detect_hallucination(score)
 
-        
-        ground_truth = "correct" if j == 0 else "hallucination"
+            ground_truth = "correct" if j == 0 else "hallucination"
 
-        results.append({
-        "original_caption": caption,
-        "test_caption": test_caption,
-        "score": score,
-        "decision": decision,
-        "ground_truth": ground_truth
-    })
+            results.append({
+                "original_caption": caption,
+                "test_caption": test_caption,
+                "score": score,
+                "decision": decision,
+                "ground_truth": ground_truth,
+            })
 
     return results
 
