@@ -1,0 +1,21 @@
+# Decision thresholds per backbone.
+#
+# A caption is flagged as a "possible hallucination" when its cosine
+# similarity score with the image falls below the threshold for the
+# active backbone. These defaults are heuristic starting points; once
+# you have a labeled validation slice, recalibrate via Youden's J on
+# the ROC curve and overwrite these values.
+#
+# Score scales differ across backbones because of how each model was
+# trained — CLIP and BLIP use softmax-style contrastive loss, SigLIP
+# uses sigmoid. Don't reuse one threshold across all three.
+
+defaults:
+  CLIP:   0.25
+  BLIP:   0.25
+  SigLIP: 0.10  # SigLIP scores tend to live on a tighter range; lower default.
+
+# Optional per-dataset overrides — keys can be added like:
+#   coco:
+#     CLIP: 0.27
+overrides: {}

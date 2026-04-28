@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vlmhall"
+version = "0.1.0"
+description = "Multi-backbone (CLIP / BLIP / SigLIP) hallucination detector for vision-language models."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "lp", email = "leksh120801@gmail.com" }]
+keywords = [
+  "vision-language",
+  "hallucination",
+  "clip",
+  "blip",
+  "siglip",
+  "multimodal",
+  "evaluation",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+  "torch>=2.0",
+  "torchvision>=0.15",
+  "transformers>=4.40",
+  "pillow>=9.0",
+  "numpy>=1.24",
+  "opencv-python-headless>=4.8",
+  "scikit-learn>=1.3",
+  "matplotlib>=3.7",
+  "datasets>=2.14,<3.0",
+  "requests>=2.31",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn[standard]>=0.27", "python-multipart>=0.0.9", "pydantic>=2.5"]
+ui  = ["streamlit>=1.32", "pandas>=2.0"]
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "ruff>=0.4",
+  "build>=1.0",
+]
+all = ["vlmhall[api,ui,dev]"]
+
+[project.urls]
+Homepage = "https://github.com/lp/vlm-hallucination-detector"
+Issues   = "https://github.com/lp/vlm-hallucination-detector/issues"
+
+[tool.setuptools]
+# Treat the existing top-level packages as the distribution.
+packages = ["models", "utils", "experiments", "api"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"

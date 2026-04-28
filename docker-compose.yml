@@ -1,0 +1,31 @@
+services:
+  api:
+    build: .
+    image: vlmhall:0.1.0
+    ports:
+      - "8000:8000"
+    environment:
+      HF_HOME: /root/.cache/huggingface
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  ui:
+    image: vlmhall:0.1.0
+    depends_on:
+      - api
+    command: streamlit run frontend/streamlit_app.py --server.address=0.0.0.0 --server.port=8501
+    ports:
+      - "8501:8501"
+    environment:
+      HF_HOME: /root/.cache/huggingface
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+
+volumes:
+  hf_cache:

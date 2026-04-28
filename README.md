@@ -280,13 +280,60 @@ Then open the printed local URL. Modes:
 - Toggle **⚔️ Run adversarial caption test** to also score auto-generated distractors.
 - Heatmaps render automatically when CLIP (or ALL) is selected.
 
-### E. (Skeleton) FastAPI service
+### E. FastAPI service
 
 ```bash
+pip install ".[api]"          # if you used pyproject.toml extras
 uvicorn api.app:app --reload --port 8000
 ```
 
-> The API surface is currently a placeholder; see [Future Improvements](#future-improvements) for the planned endpoints.
+Endpoints:
+
+| Method | Path | Description |
+|---|---|---|
+| `GET`  | `/health`   | liveness probe; reports cached models + device. |
+| `GET`  | `/`         | service metadata. |
+| `POST` | `/v1/score` | score one image against one or more captions. |
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8000/v1/score \
+     -F image=@cat.jpg \
+     -F "captions=a cat on grass" \
+     -F "captions=a dog on grass" \
+     -F model=CLIP
+```
+
+Response:
+
+```json
+{
+  "model": "CLIP",
+  "threshold": 0.25,
+  "latency_ms": 312.4,
+  "results": [
+    { "caption": "a cat on grass", "score": 0.314, "decision": "likely correct" },
+    { "caption": "a dog on grass", "score": 0.198, "decision": "possible hallucination" }
+  ]
+}
+```
+
+### F. Run the test suite
+
+```bash
+pip install pytest pytest-cov
+pytest -q                                   # fast, offline-safe
+pytest --cov=utils --cov=models             # with coverage
+```
+
+### G. Run in Docker
+
+```bash
+docker build -t vlmhall:0.1.0 .
+docker run --rm -p 8000:8000 vlmhall:0.1.0
+# then: curl http://localhost:8000/health
+```
 
 ---
 
@@ -411,6 +458,20 @@ Visual artifacts (`heatmap_0.jpg` … `heatmap_4.jpg`, `metrics_plot.png`) live 
 
 > The current evaluation slice is intentionally tiny for fast iteration. See [Future Improvements](#future-improvements) for the path to a publishable benchmark.
 
+### Backbone comparison (run `python experiments/benchmark_table.py` to populate)
+
+| Backbone | τ | Samples | Accuracy | Precision | Recall | F1 | Latency / sample |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| CLIP   | 0.25 | _TBD_ | _TBD_ | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
+| BLIP   | 0.25 | _TBD_ | _TBD_ | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
+| SigLIP | 0.10 | _TBD_ | _TBD_ | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
+
+The benchmark script builds a balanced eval set from a curated image list, generates an object-swap adversarial caption per image, scores both with each backbone, and writes a timestamped markdown table to `experiments/results/`.
+
+### Why this matters in practice
+
+Imagine an e-commerce platform that auto-generates 50,000 product captions a day with a VLM. Even a 5% hallucination rate — captions that mention attributes the photo doesn't contain — translates to 2,500 wrong listings, every day. A reviewer would need to read every caption to catch them; with this detector, the same reviewer only looks at the ~5,000 lowest-scored captions and catches the same hallucinations in 10% of the time. The same idea generalizes to medical-image report generation, accessibility alt-text, autonomous-vehicle scene descriptions, and content moderation: anywhere a VLM emits a caption that humans then trust.
+
 ---
 
 ## Limitations
@@ -421,10 +482,7 @@ Visual artifacts (`heatmap_0.jpg` … `heatmap_4.jpg`, `metrics_plot.png`) live 
 - **Heatmap is patch-norm, not attention.** Patch L2 norm correlates with "what the model represents strongly" but is not literal cross-modal attention. A Grad-CAM or token-relevance method would be more faithful.
 - **GPT-2 attacks are noisy.** The current LLM attack often produces echo-text or gibberish; downstream accuracy numbers reflect that noise.
 - **No batching.** The Streamlit and CLI paths process one image at a time. Throughput is low.
-- **`api/app.py` is empty** — no real HTTP surface yet.
-- **No tests.** `tests/test_similarity.py` is empty.
-- **Bug in `experiments/evaluation.py`.** The `decision` and `ground_truth` are computed outside the inner caption loop, so only the last caption's score is recorded per image. Fix planned.
-- **`utils/metrics.py` decision string mismatch.** Counts `"hallucination"` but `detect_hallucination` returns `"possible hallucination"` — the `hallucinations` counter is always zero in `compute_metrics`. Fix planned.
+- **No batched inference.** Throughput is one image at a time.
 
 ---
 

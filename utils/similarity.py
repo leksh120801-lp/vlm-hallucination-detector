@@ -11,13 +11,31 @@ def compute_similarity(image_embedding, text_embedding):
 
 #This computes cosine similarity between embeddings.
 
-def detect_hallucination(score, threshold=0.25):
-    
-        if score >= threshold:
-            return "likely correct"
-        else:
-            return "possible hallucination"
-     
+def detect_hallucination(score, threshold=0.25, model_name=None, dataset=None):
+    """Return a decision label for a given similarity ``score``.
+
+    Returns one of:
+      - ``"likely correct"``         if ``score >= threshold``
+      - ``"possible hallucination"`` otherwise
+
+    Threshold resolution:
+      - If ``model_name`` is provided, the threshold is looked up from
+        ``configs/thresholds.yaml`` via ``utils.config.get_threshold``,
+        which knows that CLIP, BLIP and SigLIP use different score scales.
+      - Otherwise, the explicit ``threshold`` argument is used.
+      - The historical default of ``0.25`` is preserved for backward
+        compatibility with callers that pass neither.
+    """
+    if model_name is not None:
+        # Lazy import to avoid a circular dependency at module-load time.
+        from utils.config import get_threshold
+        threshold = get_threshold(model_name, dataset=dataset)
+
+    if score >= threshold:
+        return "likely correct"
+    else:
+        return "possible hallucination"
+
 
 import json
 import os
