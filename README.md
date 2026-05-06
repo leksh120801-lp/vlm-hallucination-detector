@@ -84,10 +84,13 @@ In short: it's the kind of project that takes a buzzword ("VLM hallucination") a
 
 ## Features
 
-### Core detection
-- Cross-modal cosine-similarity scoring between image and caption embeddings.
-- Configurable hallucination decision threshold (default `0.25`).
-- L2-normalized embeddings — bounded similarity scores in `[-1, 1]`.
+### Core detection — three pluggable methods
+- **Threshold** — classic cosine similarity ≥ τ baseline. Cheapest to run, no training required.
+- **Consistency** — flags captions whose original score doesn't beat the *mean adversarial score* by τ. Robust to score-distribution shift across backbones.
+- **Logistic regression** — learned head over similarity-score statistics (4-D per-caption or 8-D per-image features), trained with `python experiments/train_logistic.py`. Beats raw cosine on small datasets because it captures original-vs-adversarial gaps.
+- All three methods are exposed under one selector in the Streamlit UI (Threshold / Consistency / Logistic / ALL) and the FastAPI service (`POST /v1/score?method=…`).
+- Per-backbone thresholds in `configs/thresholds.yaml` (CLIP / BLIP / SigLIP score on different scales).
+- L2-normalized embeddings — cosine scores bounded in `[-1, 1]`.
 
 ### Multi-model backbone
 - **CLIP** (`openai/clip-vit-base-patch32`) — the default, fastest backbone.
@@ -319,7 +322,27 @@ Response:
 }
 ```
 
-### F. Run the test suite
+### F. Train the logistic detector
+
+```bash
+# Per-image model (default; trains on a small COCO Karpathy slice).
+python experiments/train_logistic.py
+
+# Per-caption variant — adds a second checkpoint for caption-level scoring.
+python experiments/train_logistic.py --per-caption
+
+# With grid search across the LR regularisation strength.
+python experiments/train_logistic.py --do-grid-search --sample-size 50
+```
+
+### G. Compare all three methods on a dataset
+
+```bash
+python experiments/evaluate_methods.py --dataset-name COCO --sample-size 20
+# Writes experiments/results/method_comparison.csv
+```
+
+### H. Run the test suite
 
 ```bash
 pip install pytest pytest-cov
@@ -471,6 +494,34 @@ The benchmark script builds a balanced eval set from a curated image list, gener
 ### Why this matters in practice
 
 Imagine an e-commerce platform that auto-generates 50,000 product captions a day with a VLM. Even a 5% hallucination rate — captions that mention attributes the photo doesn't contain — translates to 2,500 wrong listings, every day. A reviewer would need to read every caption to catch them; with this detector, the same reviewer only looks at the ~5,000 lowest-scored captions and catches the same hallucinations in 10% of the time. The same idea generalizes to medical-image report generation, accessibility alt-text, autonomous-vehicle scene descriptions, and content moderation: anywhere a VLM emits a caption that humans then trust.
+
+---
+
+## What this project demonstrates
+
+This project was built to exercise — and to be evidence for — three specific capability areas.
+
+### Designing experiments and statistical analysis of results
+- **Three pluggable detection methods** (Threshold, Consistency, Logistic) compared head-to-head under the same conditions: same backbone, same captions, same adversarial set, so the comparison is causally valid.
+- **Per-backbone × per-method evaluation grid** in `experiments/evaluate_methods.py` writing `accuracy / precision / recall / F1` per cell to `experiments/results/method_comparison.csv`.
+- **Train / validation split with stratified sampling** in `experiments/train_logistic.py`, plus optional `StratifiedKFold` cross-validation behind `--do-grid-search`. ROC-AUC reported alongside F1.
+- **Confusion matrix with derived precision / recall / F1** (`utils/metrics.py`) so claims about a model's behaviour decompose into the four cells, not a single number.
+- **Adversarial test set** (`utils/caption_attack.py`) — rule-based object-swap perturbations and GPT-2-generated distractors, used as the negative class so each metric reflects performance against realistic failure modes.
+
+### Implementing algorithms using toolkits and self-developed code
+- **Toolkits used**: PyTorch, HuggingFace Transformers (CLIP / BLIP / SigLIP), scikit-learn (`Pipeline`, `StandardScaler`, `LogisticRegression`, `GridSearchCV`), OpenCV (heatmap blending), Streamlit, FastAPI, Docker, GitHub Actions.
+- **Self-developed components**:
+  - `utils/methods.py` — three detection methods with a uniform `(decision_label, signal_score)` return type so they're swappable.
+  - `utils/classifier.py` — feature engineering (per-caption 4-D and per-image 8-D similarity-score statistics) for the logistic-regression head.
+  - `utils/real_heatmap.py` — patch-norm interpretability map that works for CLIP / BLIP / SigLIP via a single function.
+  - `models/blip_model.py` — adapter wrapping `BlipForConditionalGeneration` to expose CLIP-style `image_embeds / text_embeds`, eliminating the deprecation surface without forking the rest of the codebase.
+  - `models/model_registry.py` — thread-safe three-tier model cache (process singleton → optional joblib disk cache → cold load) with `_quiet_hf_logging_once` for clean console output.
+
+### Solving business problems through machine learning, data mining and statistical algorithms
+- **Concrete business framing**: VLM-generated captions are increasingly trusted in production (e-commerce, medical reports, accessibility, content moderation) and they hallucinate. This project frames hallucination detection as a **post-hoc cross-modal alignment scoring problem** that works on any black-box VLM whose output you can capture.
+- **End-to-end ML lifecycle**: data ingestion (Flickr30k + COCO Karpathy via HF), feature extraction (vision and text encoders), modelling (cosine baseline → consistency → learned logistic head), evaluation, and deployment (FastAPI + Streamlit + Docker).
+- **Reduction-of-reviewer-load argument** above quantifies the dollar-value mechanism: turning a linear-time human review into a top-k review by sorting on a calibrated score.
+- **Decoupled detector from generator**: the harness scores any (image, caption) pair, so the same detector serves any captioning system — that's the kind of generic infrastructure decision a reviewer evaluates.
 
 ---
 

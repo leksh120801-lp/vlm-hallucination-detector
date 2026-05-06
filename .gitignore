@@ -1,31 +1,59 @@
-# Python cache
+# --- Python ---
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.egg-info/
+build/
+dist/
 
-# virtual environments
+# --- Virtual environments ---
 venv/
 env/
 .venv/
 
-# system files
+# --- IDE / system ---
 .DS_Store
 Thumbs.db
+.idea/
+.vscode/
 
-# notebook checkpoints
+# --- Notebooks ---
 .ipynb_checkpoints/
 
-# dataset files
+# --- Test / coverage / cache ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Datasets and downloaded media (regenerable, large) ---
 data/raw/
 data/processed/
+.hf_cache/                              # HuggingFace dataset cache
+~/.cache/huggingface/
 
-# model checkpoints
+# --- Model weights and trained checkpoints (large, regenerable) ---
 *.pt
 *.pth
+*.pkl
+.model_cache/                           # joblib disk cache from model_registry
+models/checkpoints/
+models/logistic_model.pkl
+models/logistic_model_*.pkl
 
-# logs
+# --- Experiment artefacts (regenerable) ---
+experiments/results/*.json
+experiments/results/*.png
+experiments/results/*.jpg
+experiments/results/*.csv
+
+# --- Logs ---
 logs/
+*.log
 
-# environment variables
+# --- Secrets ---
 .env
+.env.*
+!.env.example

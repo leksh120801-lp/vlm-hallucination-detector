@@ -8,30 +8,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- (placeholder for the next release)
+- _placeholder for the next release_
+
+## [0.2.0] - 2026-04-29
+
+### Added
+- **Three pluggable detection methods** (Threshold / Consistency / Logistic), unified behind `utils.methods`. The Streamlit UI and FastAPI service both expose the picker.
+- **Logistic-regression detector** trained over similarity-score *statistics* (4-D or 8-D), much more sample-efficient than embedding-feature heads. New modules:
+  - `utils/classifier.py` — feature engineering + joblib persistence.
+  - `experiments/train_logistic.py` — sklearn `Pipeline` (`StandardScaler` + `LogisticRegression`) with optional grid search, single-class fallback to `DummyClassifier`, and per-image / per-caption variants.
+- **Cross-method evaluation script** `experiments/evaluate_methods.py` — runs Threshold / Consistency / Logistic side-by-side and writes a comparison CSV.
+- **`compute_classification_metrics`** in `utils/metrics.py` — sklearn-based accuracy / precision / recall / F1 against `y_true` / `y_pred` lists.
+- **`utils/insights.py`** — best-method-by-F1 summarizer and improvement-over-baseline helper used by the Streamlit dashboard.
+- **Centralised logging** via `utils/logging_config.py` — replaces every `print(...)` debug statement; level is configurable through the `VLMHALL_LOG_LEVEL` env var.
+- New tests: `tests/test_classifier.py`, `tests/test_classifier_features.py`, `tests/test_train_logistic.py`.
+
+### Changed
+- **Datasets are now properly working again.** `nlphuji/flickr30k` and `HuggingFaceM4/NoCaps` use the embedded PIL image (no URL fetching) — the previous URL-based path was broken on `datasets >= 2.14`. COCO Karpathy still fetches by URL with timeout + retry-skip. `requirements.txt` and `pyproject.toml` pin `datasets>=2.14,<3.0`.
+- **Heatmap is now unified across CLIP / BLIP / SigLIP** via `generate_heatmap(model, processor, image, caption, model_name=...)`. The legacy `generate_clip_heatmap` is preserved as a backwards-compatible alias.
+- **Streamlit app rewritten** — three-method picker, per-(model, method) decision cards, per-caption aggregate metrics with `compute_classification_metrics`, "Summary Insight" panel, adversarial breakdown table, and side-by-side multi-model heatmaps. Cleaned up CSS bloat.
+- **FastAPI service** now exposes the three detection methods via `POST /v1/score?method=…`. Pydantic schemas updated.
+- `experiments/evaluation.py` and `experiments/run_benchmark.py` now use argparse + the centralised logger and write into `experiments/results/` reproducibly.
+- `main.py` is now a proper CLI: accepts `--image`, `--captions`, `--threshold`.
+
+### Removed (deprecated stubs)
+- `models/verification_head.py` — superseded by `utils/classifier.py` + `utils/methods.py`. Stub raises `ImportError`.
+- `experiments/train_verification_head.py` — superseded by `experiments/train_logistic.py`. Stub exits with a redirect message.
+- `tests/test_verification_head.py` — replaced by `tests/test_classifier*.py`. Marked as `pytest.mark.skip`.
+- `experiments/benchmark_table.py` — superseded by `experiments/evaluate_methods.py`. Stub exits with a redirect message.
+- (Cleanup) Run `git rm` on the four stubs above to remove them entirely.
+
+### Fixed
+- (carried over from v0.1.0) Inner-loop scope bug in `experiments/evaluation.py`.
+- (carried over from v0.1.0) Decision-string mismatch in `utils/metrics.py`.
 
 ## [0.1.0] - 2026-04-28
 
 ### Added
 - Multi-backbone hallucination detector with a unified `model_registry` over CLIP, BLIP, and SigLIP.
 - Cosine-similarity scoring with per-backbone configurable thresholds (`configs/thresholds.yaml` + `utils/config.py`).
-- Adversarial caption generators: rule-based object swaps (`utils/caption_attack.py`) and GPT-2-prompted distractors (`utils/llm_attack.py`).
-- CLIP patch-norm attention heatmap (`utils/real_heatmap.py`) with overlay rendering.
-- Streamlit dashboard with glassmorphism UI: upload mode, dataset-sample mode, model comparison cards, attention overlay (`frontend/streamlit_app.py`).
-- FastAPI service with `/health`, `/`, `POST /v1/score` endpoints, Pydantic schemas, and an in-process model cache (`api/app.py`).
-- Multi-stage CPU `Dockerfile` with healthcheck, plus `.dockerignore`.
-- Pytest suite covering `utils.similarity`, `utils.metrics`, `utils.caption_attack`, `utils.config` (~22 tests, offline-safe).
-- GitHub Actions CI (`.github/workflows/ci.yml`) running ruff and pytest on Python 3.10 and 3.11.
+- Adversarial caption generators: rule-based object swaps and GPT-2-prompted distractors.
+- CLIP patch-norm attention heatmap with overlay rendering.
+- Streamlit dashboard with glassmorphism UI.
+- FastAPI service skeleton with `/health` and `POST /v1/score` endpoints.
+- Multi-stage CPU `Dockerfile` with healthcheck, plus `.dockerignore` and `docker-compose.yml`.
+- Pytest suite covering similarity, metrics, attacks, config (offline-safe).
+- GitHub Actions CI running ruff and pytest on Python 3.10 and 3.11.
 - `pyproject.toml` with `[api]`, `[ui]`, `[dev]`, `[all]` extras.
-- `experiments/benchmark_table.py` — generates a markdown performance table per backbone.
-- Defensive dataset loaders (`utils/datasets.py`) with curated Wikimedia Commons fallback when HuggingFace dataset scripts aren't available.
 - MIT license.
+- `IMPROVEMENTS.md` (Amazon-grade critique) and `PACKAGING.md` (library-conversion guide).
 
 ### Fixed
-- Inner-loop scope bug in `experiments/evaluation.py` that caused only the last caption per image to be recorded.
-- Decision-string mismatch in `utils/metrics.py` (`"hallucination"` vs `"possible hallucination"`) that left the hallucination counter permanently at zero. Replaced literal strings with module-level constants and added derived `precision` / `recall` / `f1`.
-
-### Documentation
-- Full professional README with architecture diagram, installation, multi-mode usage, project structure, and a real-world vignette.
-- `IMPROVEMENTS.md` — Amazon-grade critique with a 14-item readiness checklist.
-- `PACKAGING.md` — end-to-end guide for converting the project into a `pip install`-able package.
+- Inner-loop scope bug in `experiments/evaluation.py`.
+- Decision-string mismatch in `utils/metrics.py`.
