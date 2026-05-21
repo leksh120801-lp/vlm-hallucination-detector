@@ -194,7 +194,7 @@ vlm-hallucination-detector/
 
 ---
 
-## Known limitations
+## Known limitations and currently working on
 
 - Thresholds are not auto-calibrated per backbone — SigLIP and BLIP score on different scales than CLIP.
 - Eval sets are small by default (designed for fast iteration). Scale up `--sample-size` for meaningful benchmarks.
@@ -207,7 +207,7 @@ vlm-hallucination-detector/
 ## Contributing
 
 1. Fork and create a branch: `git checkout -b feat/<name>`
-2. Run `ruff check .` and `pytest -q` before opening a PR
+2. Run `ruff check` and `pytest -q` before opening a PR
 3. Use conventional commit messages: `feat:`, `fix:`, `docs:`, `test:`
 
 ---
