@@ -21,3 +21,4 @@ pydantic>=2.5
 # UI
 streamlit>=1.32
 pandas>=2.0
+sentencepiece>=0.1.99

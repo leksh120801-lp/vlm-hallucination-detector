@@ -273,7 +273,7 @@ if mode == "Upload Image":
         )
         if uploaded is not None:
             image = Image.open(uploaded).convert("RGB")
-            st.image(image, width="stretch")
+            st.image(image, use_container_width=True)
 
     with col_cap:
         st.caption("Caption")
@@ -328,7 +328,7 @@ else:
 
     col_img, col_cap = st.columns([1, 1], gap="large")
     with col_img:
-        st.image(image, width="stretch")
+        st.image(image, use_container_width=True)
     with col_cap:
         st.markdown(
             f"""
@@ -355,7 +355,7 @@ with col_opt:
     show_heatmaps = st.checkbox("🌡️ Show attention heatmaps", value=True)
 
 with col_btn:
-    run_button = st.button("⚡ Run Evaluation", width="stretch")
+    run_button = st.button("⚡ Run Evaluation", use_container_width=True)
 
 
 # ---------------------------------------------------------------------------
@@ -647,7 +647,7 @@ if run_button and image and caption:
                 "recall": "Recall", "accuracy": "Accuracy",
             }
         )
-        st.dataframe(display_df, hide_index=True, width="stretch")
+        st.dataframe(display_df, hide_index=True, use_container_width=True)
 
         _performance_badge(best_f1)
 
@@ -685,7 +685,7 @@ if run_button and image and caption:
         heatmap_cols = st.columns(len(models_to_run) + 1, gap="medium")
 
         with heatmap_cols[0]:
-            st.image(image, caption="Original Image", width="stretch")
+            st.image(image, caption="Original Image", use_container_width=True)
 
         for col_idx, m in enumerate(models_to_run):
             backbone, processor = loaded_models[m]
@@ -697,7 +697,7 @@ if run_button and image and caption:
                     st.image(
                         cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB),
                         caption=f"{m} Attention",
-                        width="stretch",
+                        use_container_width=True,
                     )
                 else:
                     st.warning(f"{m} heatmap failed.")
