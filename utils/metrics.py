@@ -102,3 +102,35 @@ def confusion_matrix(results):
         "recall": recall,
         "f1": f1,
     }
+
+
+def compute_classification_metrics(y_true, y_pred, hallucination_label: str = "hallucination"):
+    """sklearn-based accuracy / precision / recall / F1 over (y_true, y_pred) lists.
+
+    Designed for the cross-method evaluation harness in
+    ``experiments/evaluate_methods.py``, which produces predictions normalized to
+    ``"hallucination"`` / ``"likely correct"`` via ``utils.methods``. Counts
+    ``hallucination`` as the positive class by default.
+
+    Distinct from ``compute_metrics`` (which works over result *dicts*) — this
+    one is the standard sklearn-style entry point for label-vs-label scoring.
+    """
+    from sklearn.metrics import (
+        accuracy_score,
+        f1_score,
+        precision_score,
+        recall_score,
+    )
+
+    return {
+        "accuracy": float(accuracy_score(y_true, y_pred)),
+        "precision": float(
+            precision_score(y_true, y_pred, pos_label=hallucination_label, zero_division=0)
+        ),
+        "recall": float(
+            recall_score(y_true, y_pred, pos_label=hallucination_label, zero_division=0)
+        ),
+        "f1": float(
+            f1_score(y_true, y_pred, pos_label=hallucination_label, zero_division=0)
+        ),
+    }

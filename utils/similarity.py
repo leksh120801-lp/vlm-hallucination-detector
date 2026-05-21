@@ -1,72 +1,87 @@
+"""Cosine-similarity scoring + threshold-based hallucination decision.
+
+This module is the cosine baseline; the richer detection methods live in
+:mod:`utils.methods`. All three methods consume the cosine score produced
+here as their input feature.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+from datetime import datetime
+from typing import Iterable, List
+
 import torch
 import torch.nn.functional as F
 
-def compute_similarity(image_embedding, text_embedding):
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
+
+
+def compute_similarity(image_embedding: torch.Tensor, text_embedding: torch.Tensor) -> torch.Tensor:
+    """Pairwise cosine similarity between L2-normalized image and text embeddings.
+
+    Args:
+        image_embedding: ``(B_img, D)`` tensor.
+        text_embedding:  ``(B_txt, D)`` tensor.
+
+    Returns:
+        ``(B_img, B_txt)`` tensor of cosine similarities in ``[-1, 1]``.
+    """
     image_embedding = F.normalize(image_embedding, dim=-1)
     text_embedding = F.normalize(text_embedding, dim=-1)
+    return torch.matmul(image_embedding, text_embedding.T)
 
-    similarity = torch.matmul(image_embedding, text_embedding.T)
 
-    return similarity
+def detect_hallucination(
+    score: float,
+    threshold: float = 0.25,
+    model_name: str | None = None,
+    dataset: str | None = None,
+) -> str:
+    """Threshold a single similarity score into a decision label.
 
-#This computes cosine similarity between embeddings.
+    Returns one of ``"likely correct"`` or ``"possible hallucination"``.
 
-def detect_hallucination(score, threshold=0.25, model_name=None, dataset=None):
-    """Return a decision label for a given similarity ``score``.
-
-    Returns one of:
-      - ``"likely correct"``         if ``score >= threshold``
-      - ``"possible hallucination"`` otherwise
-
-    Threshold resolution:
-      - If ``model_name`` is provided, the threshold is looked up from
-        ``configs/thresholds.yaml`` via ``utils.config.get_threshold``,
-        which knows that CLIP, BLIP and SigLIP use different score scales.
-      - Otherwise, the explicit ``threshold`` argument is used.
-      - The historical default of ``0.25`` is preserved for backward
-        compatibility with callers that pass neither.
+    Threshold resolution order:
+      1. If ``model_name`` is given, look up the per-backbone threshold from
+         ``configs/thresholds.yaml`` via :func:`utils.config.get_threshold`.
+      2. Otherwise, use the explicit ``threshold`` argument.
     """
     if model_name is not None:
         # Lazy import to avoid a circular dependency at module-load time.
         from utils.config import get_threshold
         threshold = get_threshold(model_name, dataset=dataset)
 
-    if score >= threshold:
-        return "likely correct"
-    else:
-        return "possible hallucination"
+    return "likely correct" if score >= threshold else "possible hallucination"
 
 
-import json
-import os
-from datetime import datetime
+def save_results(
+    image_path: str,
+    captions: Iterable[str],
+    scores: Iterable[float],
+    decisions: Iterable[str],
+    output_dir: str = "experiments/results",
+) -> str:
+    """Persist (caption, score, decision) rows as a timestamped JSON file."""
+    os.makedirs(output_dir, exist_ok=True)
 
+    rows: List[dict] = [
+        {"caption": caption, "similarity_score": float(score), "decision": decision}
+        for caption, score, decision in zip(captions, scores, decisions)
+    ]
 
-def save_results(image_path, captions, scores, decisions):
-    os.makedirs("experiments/results", exist_ok=True)
-
-    results = []
-
-    for caption, score, decision in zip(captions, scores, decisions):
-        results.append({
-            "caption": caption,
-            "similarity_score": float(score),
-            "decision": decision
-        })
-
-    output = {
+    payload = {
         "image": image_path,
-        "results": results,
-        "timestamp": datetime.now().isoformat()
+        "results": rows,
+        "timestamp": datetime.now().isoformat(),
     }
 
-    filename = f"experiments/results/result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    filename = f"{output_dir}/result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    with open(filename, "w") as fh:
+        json.dump(payload, fh, indent=4)
 
-    with open(filename, "w") as f:
-        json.dump(output, f, indent=4)
-
-    print(f"\nResults saved to {filename}")
-
-    # This function saves the similarity scores to a JSON file for later analysis.
-
-    
+    logger.info("Results saved to %s", filename)
+    return filename
