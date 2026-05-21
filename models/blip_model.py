@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import os
 from types import SimpleNamespace
-from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -46,9 +45,9 @@ class _BlipSimilarityAdapter(nn.Module):
 
     def forward(
         self,
-        pixel_values: Optional[torch.Tensor] = None,
-        input_ids: Optional[torch.Tensor] = None,
-        attention_mask: Optional[torch.Tensor] = None,
+        pixel_values: torch.Tensor | None = None,
+        input_ids: torch.Tensor | None = None,
+        attention_mask: torch.Tensor | None = None,
         **_: object,
     ):
         # Image side — pooler output of the vision transformer.

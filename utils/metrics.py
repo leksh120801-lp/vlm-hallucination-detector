@@ -1,4 +1,3 @@
-import numpy as np
 
 # ----------------------------------------------------------------------
 # Decision label constants — keep these in sync with

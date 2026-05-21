@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import List
 
 import torch
 
@@ -63,7 +62,7 @@ def main() -> None:
 
     sims = compute_similarity(outputs.image_embeds, outputs.text_embeds)
 
-    decisions: List[str] = []
+    decisions: list[str] = []
     print("\nSimilarity scores:\n")
     for caption, score_tensor in zip(args.captions, sims[0]):
         score = float(score_tensor.item())

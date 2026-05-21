@@ -37,7 +37,6 @@ from utils.datasets import (  # noqa: E402
     load_coco_sample,
     load_flickr_sample,
 )
-from utils.metrics import compute_classification_metrics  # noqa: E402
 from utils.methods import (  # noqa: E402
     HALLUCINATION,
     LIKELY_CORRECT,
@@ -46,6 +45,7 @@ from utils.methods import (  # noqa: E402
     method_threshold,
     split_similarity_scores,
 )
+from utils.metrics import compute_classification_metrics  # noqa: E402
 from utils.preprocessing import pil_to_cv2  # noqa: E402
 from utils.real_heatmap import generate_heatmap  # noqa: E402
 from utils.similarity import compute_similarity  # noqa: E402

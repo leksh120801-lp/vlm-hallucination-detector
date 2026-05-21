@@ -36,7 +36,6 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import torch
 
@@ -78,8 +77,8 @@ def _normalise_label(label: str) -> str:
 def evaluate_pope(
     model_name: str = "CLIP",
     split: str = "adversarial",
-    sample_size: Optional[int] = 200,
-    threshold: Optional[float] = None,
+    sample_size: int | None = 200,
+    threshold: float | None = None,
 ) -> dict:
     """Score every (image, question) pair and aggregate POPE-style metrics.
 

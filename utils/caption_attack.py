@@ -1,6 +1,5 @@
 import random
 
-
 OBJECT_SWAPS = {
     "dog": ["cat", "horse", "cow"],
     "cat": ["dog", "rabbit", "fox"],

@@ -27,10 +27,11 @@ Public API:
 
 from __future__ import annotations
 
+import contextlib
 import os
 import threading
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable
 
 import joblib
 
@@ -179,10 +180,8 @@ def _save_to_disk(model_name: str, payload, cache_dir: Path) -> None:
             model_name, exc,
         )
         # Best-effort cleanup of the partial tmp file.
-        try:
+        with contextlib.suppress(Exception):
             tmp_path.unlink(missing_ok=True)
-        except Exception:
-            pass
 
 
 # ---------------------------------------------------------------------------
@@ -192,7 +191,7 @@ def _save_to_disk(model_name: str, payload, cache_dir: Path) -> None:
 def load_model_by_name(
     model_name: str,
     *,
-    use_disk_cache: Optional[bool] = None,
+    use_disk_cache: bool | None = None,
     cache_dir: Path = DEFAULT_DISK_CACHE_DIR,
 ) -> tuple:
     """Return ``(model, processor, device)`` for ``model_name``, cached.
@@ -252,7 +251,7 @@ def load_model_by_name(
 
 
 def clear_model_cache(
-    model_name: Optional[str] = None,
+    model_name: str | None = None,
     *,
     clear_disk: bool = True,
     cache_dir: Path = DEFAULT_DISK_CACHE_DIR,
@@ -272,15 +271,11 @@ def clear_model_cache(
     if clear_disk and cache_dir.exists():
         if model_name is None:
             for f in cache_dir.glob("*.joblib"):
-                try:
+                with contextlib.suppress(FileNotFoundError):
                     f.unlink()
-                except FileNotFoundError:
-                    pass
         else:
-            try:
+            with contextlib.suppress(FileNotFoundError):
                 _disk_cache_path(model_name, cache_dir).unlink()
-            except FileNotFoundError:
-                pass
 
 
 def is_loaded(model_name: str) -> bool:

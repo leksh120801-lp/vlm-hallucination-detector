@@ -51,6 +51,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import contextlib
+
 from models.model_registry import load_model_by_name
 from utils.caption_attack import generate_adversarial_captions
 from utils.classifier import MODEL_PATH, extract_features, extract_image_features
@@ -133,10 +135,8 @@ def evaluate_and_save_metrics(model, X_test, y_test, metrics_path=None):
     """Score on a held-out set and (optionally) persist the metrics."""
     y_pred = model.predict(X_test)
     y_proba = None
-    try:
+    with contextlib.suppress(Exception):
         y_proba = model.predict_proba(X_test)[:, 1]
-    except Exception:
-        pass
 
     metrics = {
         "accuracy":  float(accuracy_score(y_test, y_pred)),
@@ -232,10 +232,8 @@ def train_logistic_model(
     # ---- Reproducibility ----
     random.seed(random_seed)
     np.random.seed(random_seed)
-    try:
+    with contextlib.suppress(Exception):
         torch.manual_seed(random_seed)
-    except Exception:
-        pass
 
     # ---- Train / val split ----
     stratify = y if len(np.unique(y)) > 1 and len(y) >= 4 else None

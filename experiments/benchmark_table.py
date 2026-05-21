@@ -39,8 +39,6 @@ from utils.caption_attack import object_swap_attack
 from utils.config import get_threshold
 from utils.datasets import _materialise_fallback  # type: ignore[attr-defined]
 from utils.metrics import (
-    DECISION_CORRECT,
-    DECISION_HALLUCINATION,
     GROUND_TRUTH_CORRECT,
     GROUND_TRUTH_HALLUCINATION,
     compute_metrics,

@@ -17,7 +17,6 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import List
 
 import torch
 
@@ -45,12 +44,12 @@ def load_dataset_sample(size: int = 2):
     return load_dataset("yerevann/coco-karpathy", split=f"test[:{size}]")
 
 
-def run_dataset_evaluation(size: int = 2, threshold: float = 0.25) -> List[dict]:
+def run_dataset_evaluation(size: int = 2, threshold: float = 0.25) -> list[dict]:
     model, processor, device = load_clip_model()
     dataset = load_dataset_sample(size=size)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    results: List[dict] = []
+    results: list[dict] = []
 
     for i, sample in enumerate(dataset):
         caption = sample["sentences"][0]
@@ -89,7 +88,7 @@ def run_dataset_evaluation(size: int = 2, threshold: float = 0.25) -> List[dict]
     return results
 
 
-def save_eval_results(results: List[dict], metrics: dict) -> Path:
+def save_eval_results(results: list[dict], metrics: dict) -> Path:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     filename = RESULTS_DIR / f"eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     with filename.open("w") as fh:

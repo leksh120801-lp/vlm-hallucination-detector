@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Iterable
 from datetime import datetime
-from typing import Iterable, List
 
 import torch
 import torch.nn.functional as F
@@ -68,7 +68,7 @@ def save_results(
     """Persist (caption, score, decision) rows as a timestamped JSON file."""
     os.makedirs(output_dir, exist_ok=True)
 
-    rows: List[dict] = [
+    rows: list[dict] = [
         {"caption": caption, "similarity_score": float(score), "decision": decision}
         for caption, score, decision in zip(captions, scores, decisions)
     ]

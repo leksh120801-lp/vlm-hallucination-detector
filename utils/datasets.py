@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import List
 
 # -----------------------------------------------------------------------------
 # Cache configuration — set HF env vars at import time so subsequent
@@ -109,7 +108,7 @@ def _safe_load_dataset(dataset_id: str, **kwargs):
 # Public loaders
 # -----------------------------------------------------------------------------
 
-def load_flickr_sample(n: int = 10) -> List[dict]:
+def load_flickr_sample(n: int = 10) -> list[dict]:
     """Load up to ``n`` (image, caption) pairs from ``nlphuji/flickr30k``."""
     dataset = _safe_load_dataset(
         "nlphuji/flickr30k",
@@ -117,7 +116,7 @@ def load_flickr_sample(n: int = 10) -> List[dict]:
         trust_remote_code=True,
     )
 
-    samples: List[dict] = []
+    samples: list[dict] = []
     for item in dataset:
         if len(samples) >= n:
             break
@@ -138,7 +137,7 @@ def load_flickr_sample(n: int = 10) -> List[dict]:
     return samples
 
 
-def load_coco_sample(n: int = 10) -> List[dict]:
+def load_coco_sample(n: int = 10) -> list[dict]:
     """Load up to ``n`` (image, caption) pairs from ``yerevann/coco-karpathy``.
 
     The dataset's ``url`` column is cast to HuggingFace's :class:`Image` feature
@@ -153,7 +152,7 @@ def load_coco_sample(n: int = 10) -> List[dict]:
     )
     dataset = dataset.cast_column("url", DatasetsImage())
 
-    samples: List[dict] = []
+    samples: list[dict] = []
     for item in dataset:
         if len(samples) >= n:
             break

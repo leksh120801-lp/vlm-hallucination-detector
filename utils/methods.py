@@ -92,14 +92,14 @@ def method_logistic(model, original_score, attack_scores):
     def _expected_n_features(m):
         try:
             if hasattr(m, "n_features_in_"):
-                return int(getattr(m, "n_features_in_"))
+                return int(m.n_features_in_)
             if hasattr(m, "named_steps"):
                 for step in m.named_steps.values():
                     if hasattr(step, "n_features_in_"):
-                        return int(getattr(step, "n_features_in_"))
+                        return int(step.n_features_in_)
                 last = list(m.named_steps.values())[-1]
                 if hasattr(last, "n_features_in_"):
-                    return int(getattr(last, "n_features_in_"))
+                    return int(last.n_features_in_)
         except Exception:
             pass
         return None

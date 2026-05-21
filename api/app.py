@@ -30,7 +30,6 @@ import io
 import sys
 import time
 from pathlib import Path
-from typing import List, Optional
 
 # Ensure repo root is importable when uvicorn launches from elsewhere.
 _ROOT = Path(__file__).resolve().parents[1]
@@ -101,7 +100,7 @@ class CaptionMethodResult(BaseModel):
     caption: str
     method: str = Field(..., description='"Threshold", "Consistency", or "Logistic".')
     score: float = Field(..., description="Cosine similarity in [-1, 1].")
-    consistency: Optional[float] = Field(
+    consistency: float | None = Field(
         None, description="Original-vs-adversarial gap; only set for Consistency / Logistic."
     )
     decision: str = Field(..., description='"likely correct" or "hallucination".')
@@ -109,16 +108,16 @@ class CaptionMethodResult(BaseModel):
 
 class ScoreResponse(BaseModel):
     model: str
-    methods: List[str]
+    methods: list[str]
     similarity_threshold: float
     consistency_threshold: float
     latency_ms: float
-    results: List[CaptionMethodResult]
+    results: list[CaptionMethodResult]
 
 
 class HealthResponse(BaseModel):
     status: str
-    cached_models: List[str]
+    cached_models: list[str]
     logistic_model_loaded: bool
     device: str
 
@@ -149,7 +148,7 @@ def health():
 @app.post("/v1/score", response_model=ScoreResponse, tags=["score"])
 async def score(
     image: UploadFile = File(..., description="Image file (jpg / png)."),
-    captions: List[str] = Form(..., description="One or more candidate captions."),
+    captions: list[str] = Form(..., description="One or more candidate captions."),
     model: str = Form("CLIP", description="Backbone: CLIP | BLIP | SigLIP."),
     method: str = Form(
         "Threshold",
@@ -188,7 +187,7 @@ async def score(
     backbone, processor, device = _get_cached_backbone(model)
     t0 = time.perf_counter()
 
-    results: List[CaptionMethodResult] = []
+    results: list[CaptionMethodResult] = []
     for primary_caption in captions:
         # Each caption is scored against itself + adversaries; this gives
         # Consistency and Logistic the comparison scores they need.

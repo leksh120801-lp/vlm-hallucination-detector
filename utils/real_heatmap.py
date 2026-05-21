@@ -16,7 +16,6 @@ Patch grid sizes (for reference):
 
 from __future__ import annotations
 
-import numpy as np
 import torch
 
 from utils.logging_config import get_logger

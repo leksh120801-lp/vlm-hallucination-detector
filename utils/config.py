@@ -10,7 +10,6 @@ place and can be tuned without code changes.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -38,7 +37,7 @@ def _load_yaml() -> dict:
         return {"defaults": _FALLBACK_DEFAULTS, "overrides": {}}
 
 
-def get_threshold(model_name: str, dataset: Optional[str] = None) -> float:
+def get_threshold(model_name: str, dataset: str | None = None) -> float:
     """Return the decision threshold for a given backbone (and optional dataset).
 
     Lookup order:
