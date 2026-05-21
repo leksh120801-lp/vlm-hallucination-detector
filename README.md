@@ -35,6 +35,28 @@ It works by projecting image and caption into a shared embedding space (via CLIP
 
 ---
 
+## Detection methods
+
+| Method | How it works | When to use |
+|---|---|---|
+| **Threshold** | Flags captions where cosine similarity < τ | Fast baseline, no training needed |
+| **Consistency** | Flags captions that don't beat adversarial score by τ | More robust to backbone score shifts |
+| **Logistic** | Learned head over similarity-score features | Best accuracy on small datasets |
+
+All three methods are selectable in the Streamlit UI and the FastAPI endpoint.
+
+### Backbones
+
+| Model | HuggingFace checkpoint | Notes |
+|---|---|---|
+| CLIP | `openai/clip-vit-base-patch32` | Default — fastest |
+| BLIP | `Salesforce/blip-image-captioning-base` | Captioning-pretrained |
+| SigLIP | `google/siglip-base-patch16-224` | Stronger zero-shot |
+
+Thresholds differ per backbone — see `configs/thresholds.yaml`.
+
+---
+
 ## Installation
 
 ```bash
@@ -48,6 +70,8 @@ pip install -r requirements.txt
 ```
 
 > First run downloads model weights from HuggingFace (~600 MB). Subsequent runs use cache.
+
+**GPU (optional):** If you have CUDA, install the matching PyTorch wheel from [pytorch.org](https://pytorch.org/get-started/locally/) before the step above. The model registry auto-detects and moves weights to GPU.
 
 ---
 
@@ -108,6 +132,20 @@ pytest -q
 
 ---
 
+## Configuration
+
+Key settings you may want to change:
+
+| Setting | File | Default |
+|---|---|---|
+| Decision threshold τ | `configs/thresholds.yaml` | 0.25 (CLIP) |
+| Backbone | `main.py` / UI selector | CLIP |
+| Eval dataset size | `experiments/evaluation.py` | 10 samples |
+| Adversarial count (GPT-2) | `utils/llm_attack.py` | 3 per image |
+| Output directory | `experiments/results/` | fixed path |
+
+---
+
 ## How it works
 
 ```
@@ -153,6 +191,24 @@ vlm-hallucination-detector/
 ├── tests/                     # Pytest suite
 └── configs/thresholds.yaml    # Per-backbone decision thresholds
 ```
+
+---
+
+## Known limitations
+
+- Thresholds are not auto-calibrated per backbone — SigLIP and BLIP score on different scales than CLIP.
+- Eval sets are small by default (designed for fast iteration). Scale up `--sample-size` for meaningful benchmarks.
+- Adversarial labels are approximate — an object-swap caption might still be valid if the swapped object is also in the image.
+- GPT-2 attacks can produce noisy/echo text; results from LLM-attack runs reflect that noise.
+- No batched inference — one image at a time in both the CLI and dashboard.
+
+---
+
+## Contributing
+
+1. Fork and create a branch: `git checkout -b feat/<name>`
+2. Run `ruff check .` and `pytest -q` before opening a PR
+3. Use conventional commit messages: `feat:`, `fix:`, `docs:`, `test:`
 
 ---
 
