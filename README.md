@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=flat&logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![Transformers](https://img.shields.io/badge/HuggingFace-Transformers-FFD21E?style=flat&logo=huggingface&logoColor=black)](https://huggingface.co/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Live%20Demo-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://hallucibench.streamlit.app/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -211,56 +211,6 @@ vlm-hallucination-detector/
 ├── notebooks/exploration.ipynb
 ├── tests/                     # Pytest suite
 └── configs/thresholds.yaml    # Per-backbone decision thresholds
-```
-
----
-
-## Deploying the Streamlit app
-
-### Option A — Streamlit Community Cloud (free, shareable link)
-
-1. **Push this repo to GitHub** (if not already):
-   ```bash
-   git remote -v          # confirm origin points to your repo
-   git push origin main
-   ```
-
-2. **Sign in** to [share.streamlit.io](https://share.streamlit.io) with your GitHub account.
-
-3. Click **"New app"** → fill in:
-   | Field | Value |
-   |---|---|
-   | Repository | `leksh120801-lp/vlm-hallucination-detector` |
-   | Branch | `main` |
-   | Main file path | `frontend/streamlit_app.py` |
-
-4. Click **Deploy**. Streamlit installs dependencies from `requirements.txt` automatically.
-
-5. After a minute or two you get a permanent public URL like:
-   ```
-   https://leksh120801-lp-vlm-hallucination-detector-frontendstre-<hash>.streamlit.app
-   ```
-   Copy that link and paste it in your GitHub repo's **"About"** sidebar (⚙️ → Website).
-
-> **Note:** Streamlit Community Cloud spins the app down after inactivity. The first request after sleep takes ~30 s to wake up. For always-on hosting, use the Docker option below.
-
-### Option B — Docker (self-hosted / always-on)
-
-```bash
-# Build
-docker build -t vlm-hallucination-detector .
-
-# Run Streamlit on port 8501
-docker run -p 8501:8501 vlm-hallucination-detector \
-  streamlit run frontend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
-```
-
-Or use the compose stack (Streamlit + FastAPI together):
-
-```bash
-docker compose up
-# Streamlit → http://localhost:8501
-# FastAPI   → http://localhost:8000/docs
 ```
 
 ---
