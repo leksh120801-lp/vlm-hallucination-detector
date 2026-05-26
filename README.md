@@ -31,7 +31,7 @@ It works by projecting image and caption into a shared embedding space (via CLIP
 - **Attention heatmaps** — visualize which image patches the model focused on
 - **Streamlit dashboard** — upload images, pick datasets, compare models, view heatmaps
 - **FastAPI service** — HTTP endpoint for scoring at scale
-- **Datasets included** — Flickr30k, COCO Karpathy, Visual Genome
+- **Datasets included** — Flickr30k, COCO Karpathy (streamed via HuggingFace)
 
 ---
 
@@ -60,7 +60,7 @@ Thresholds differ per backbone — see `configs/thresholds.yaml`.
 ## Installation
 
 ```bash
-git clone https://github.com/<your-username>/vlm-hallucination-detector.git
+git clone https://github.com/leksh120801-lp/vlm-hallucination-detector.git
 cd vlm-hallucination-detector
 
 python -m venv .venv
@@ -173,23 +173,94 @@ CLIP also produces a **patch-norm heatmap** — showing which parts of the image
 ```
 vlm-hallucination-detector/
 ├── main.py                    # CLI entry point
+├── pyproject.toml             # Package metadata & build config
+├── requirements.txt           # Pinned runtime deps
+├── Dockerfile                 # Container image
+├── docker-compose.yml         # Compose stack (app + API)
+├── PACKAGING.md               # Guide for publishing as a pip package
+├── CHANGELOG.md               # Release history
 ├── api/app.py                 # FastAPI service
 ├── frontend/streamlit_app.py  # Streamlit dashboard
 ├── models/
 │   ├── model_registry.py      # Unified load_model_by_name()
 │   ├── clip_model.py
 │   ├── blip_model.py
-│   └── siglip_model.py
+│   ├── siglip_model.py
+│   └── logistic_model.pkl     # Trained logistic head (checked in)
 ├── utils/
 │   ├── similarity.py          # Cosine scoring + decision
 │   ├── methods.py             # Threshold / Consistency / Logistic
+│   ├── classifier.py          # Logistic model load/predict
 │   ├── real_heatmap.py        # Patch-norm attention heatmap
-│   ├── caption_attack.py      # Adversarial caption generation
-│   ├── datasets.py            # Dataset loaders
-│   └── metrics.py             # Accuracy, confusion matrix, F1
+│   ├── caption_attack.py      # Adversarial caption generation (object swap)
+│   ├── llm_attack.py          # GPT-2–based caption perturbations
+│   ├── datasets.py            # Flickr30k + COCO Karpathy loaders
+│   ├── metrics.py             # Accuracy, confusion matrix, F1
+│   ├── preprocessing.py       # PIL ↔ CV2 helpers
+│   ├── visualization.py       # Heatmap save/display helpers
+│   ├── plots.py               # Matplotlib metric plots
+│   ├── config.py              # YAML config loading
+│   └── logging_config.py      # Structured logging setup
 ├── experiments/               # Evaluation scripts + saved results
+│   ├── evaluation.py          # COCO eval + LLM attacks + heatmaps
+│   ├── run_benchmark.py       # CLIP vs BLIP vs SigLIP comparison
+│   ├── train_logistic.py      # Train the logistic detection head
+│   ├── evaluate_pope.py       # POPE benchmark runner
+│   └── results/               # Timestamped JSON + plot outputs
+├── docs/                      # Architecture & dataset notes
+├── notebooks/exploration.ipynb
 ├── tests/                     # Pytest suite
 └── configs/thresholds.yaml    # Per-backbone decision thresholds
+```
+
+---
+
+## Deploying the Streamlit app
+
+### Option A — Streamlit Community Cloud (free, shareable link)
+
+1. **Push this repo to GitHub** (if not already):
+   ```bash
+   git remote -v          # confirm origin points to your repo
+   git push origin main
+   ```
+
+2. **Sign in** to [share.streamlit.io](https://share.streamlit.io) with your GitHub account.
+
+3. Click **"New app"** → fill in:
+   | Field | Value |
+   |---|---|
+   | Repository | `leksh120801-lp/vlm-hallucination-detector` |
+   | Branch | `main` |
+   | Main file path | `frontend/streamlit_app.py` |
+
+4. Click **Deploy**. Streamlit installs dependencies from `requirements.txt` automatically.
+
+5. After a minute or two you get a permanent public URL like:
+   ```
+   https://leksh120801-lp-vlm-hallucination-detector-frontendstre-<hash>.streamlit.app
+   ```
+   Copy that link and paste it in your GitHub repo's **"About"** sidebar (⚙️ → Website).
+
+> **Note:** Streamlit Community Cloud spins the app down after inactivity. The first request after sleep takes ~30 s to wake up. For always-on hosting, use the Docker option below.
+
+### Option B — Docker (self-hosted / always-on)
+
+```bash
+# Build
+docker build -t vlm-hallucination-detector .
+
+# Run Streamlit on port 8501
+docker run -p 8501:8501 vlm-hallucination-detector \
+  streamlit run frontend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+```
+
+Or use the compose stack (Streamlit + FastAPI together):
+
+```bash
+docker compose up
+# Streamlit → http://localhost:8501
+# FastAPI   → http://localhost:8000/docs
 ```
 
 ---

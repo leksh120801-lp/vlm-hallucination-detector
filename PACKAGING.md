@@ -51,7 +51,7 @@ vlm-hallucination-detector/
 │       ├── data/
 │       │   ├── flickr.py
 │       │   ├── coco.py
-│       │   └── visual_genome.py
+│       │   └── visual_genome.py       # planned — not yet implemented
 │       ├── viz/
 │       │   ├── heatmap.py
 │       │   └── plots.py
@@ -98,7 +98,7 @@ vlm-hallucination-detector/
 | `utils/visualization.py` + `utils/real_heatmap.py` | `vlmhall.viz.heatmap` |
 | `utils/caption_attack.py` | `vlmhall.attacks.object_swap` |
 | `utils/llm_attack.py` | `vlmhall.attacks.llm_attack` |
-| `utils/datasets.py` | `vlmhall.data.{flickr,coco,visual_genome}` |
+| `utils/datasets.py` | `vlmhall.data.{flickr,coco}` (+ `visual_genome` planned) |
 | `utils/metrics.py` | `vlmhall.eval.metrics` |
 | `utils/plots.py` | `vlmhall.viz.plots` |
 | `utils/config.py` | `vlmhall.config` |
