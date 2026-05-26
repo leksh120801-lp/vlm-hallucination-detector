@@ -11,6 +11,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+### 🚀 [Try the live app → hallucibench.streamlit.app](https://hallucibench.streamlit.app/)
+
 </div>
 
 ---
